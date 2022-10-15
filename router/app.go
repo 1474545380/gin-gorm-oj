@@ -6,8 +6,9 @@ import (
 )
 
 func Router() *gin.Engine {
-	r:=gin.Default()
+	r := gin.Default()
 	//路由
 	r.GET("/ping", service.Ping)
+	r.GET("/getproblemlist", service.GetProblemList)
 	return r
 }
