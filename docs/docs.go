@@ -16,7 +16,28 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/getproblemlist": {
+        "/problemdetail": {
+            "get": {
+                "summary": "问题详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "problem_identity",
+                        "name": "identity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":\"200\",\"data\":\"\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/problemlist": {
             "get": {
                 "summary": "问题列表",
                 "parameters": [

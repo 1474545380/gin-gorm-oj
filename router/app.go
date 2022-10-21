@@ -12,9 +12,10 @@ func Router() *gin.Engine {
 	r := gin.Default()
 
 	//路由
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	r.GET("/ping", service.Ping)
-	r.GET("/getproblemlist", service.GetProblemList)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler)) //swagger文档路由
+	r.GET("/ping", service.Ping)                                         //test
+	r.GET("/problemlist", service.GetProblemList)                        //获取问题页面
+	r.GET("/problemdetail", service.GetProblemDetail)                    //获取问题详情
 
 	return r
 }

@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"log"
 )
 
 type Problem struct {
@@ -20,7 +19,6 @@ func (table *Problem) TableName() string {
 }
 
 func GetProblemList(keyword string, categoryIdentity string) *gorm.DB {
-	log.Println(categoryIdentity)
 	tx := DB.Model(new(Problem)).
 		Preload("ProblemCategories").Preload("ProblemCategories.Category").
 		Where("title like ? OR content like ?", "%"+keyword+"%", "%"+keyword+"%")
