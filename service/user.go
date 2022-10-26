@@ -10,7 +10,7 @@ import (
 )
 
 // GetUserDetail
-// @Tags 公共方法
+// @Tags 用户方法
 // @Summary 用户详情
 // @Param identity query string false "user identity"
 // @Success 200 {string} json "{"code":"200","data":""}"
@@ -47,7 +47,7 @@ func GetUserDetail(c *gin.Context) {
 }
 
 // Login
-// @Tags 公共方法
+// @Tags 用户方法
 // @Summary 用户登陆
 // @Param username formData string false "username"
 // @Param password formData string false "password"
@@ -93,5 +93,35 @@ func Login(c *gin.Context) {
 		"data": map[string]interface{}{
 			"token": token,
 		},
+	})
+}
+
+// SendCode
+// @Tags 用户方法
+// @Summary 发送验证码
+// @Param email formData string true "email"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /sendcode [post]
+func SendCode(c *gin.Context) {
+	email := c.PostForm("email")
+	if email == "" {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "参数不正确",
+		})
+		return
+	}
+	code := "123123"
+	err := help.SendCode(email, code)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "send code error:" + err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": "发送成功",
 	})
 }

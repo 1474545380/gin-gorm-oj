@@ -19,7 +19,7 @@ paths:
             type: string
       summary: 用户登陆
       tags:
-      - 公共方法
+      - 用户方法
   /problemdetail:
     get:
       parameters:
@@ -58,6 +58,22 @@ paths:
           schema:
             type: string
       summary: 问题列表
+  /sendcode:
+    post:
+      parameters:
+      - description: email
+        in: formData
+        name: email
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code":"200","data":""}'
+          schema:
+            type: string
+      summary: 发送验证码
+      tags:
+      - 用户方法
   /submitlist:
     get:
       parameters:
@@ -101,5 +117,5 @@ paths:
             type: string
       summary: 用户详情
       tags:
-      - 公共方法
+      - 用户方法
 swagger: "2.0"

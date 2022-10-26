@@ -19,7 +19,7 @@ const docTemplate = `{
         "/login": {
             "post": {
                 "tags": [
-                    "公共方法"
+                    "用户方法"
                 ],
                 "summary": "用户登陆",
                 "parameters": [
@@ -106,6 +106,31 @@ const docTemplate = `{
                 }
             }
         },
+        "/sendcode": {
+            "post": {
+                "tags": [
+                    "用户方法"
+                ],
+                "summary": "发送验证码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":\"200\",\"data\":\"\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/submitlist": {
             "get": {
                 "summary": "提交列表",
@@ -154,7 +179,7 @@ const docTemplate = `{
         "/userdetail": {
             "get": {
                 "tags": [
-                    "公共方法"
+                    "用户方法"
                 ],
                 "summary": "用户详情",
                 "parameters": [

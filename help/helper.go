@@ -4,6 +4,8 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/jordan-wright/email"
+	"net/smtp"
 )
 
 type UserClaims struct {
@@ -20,7 +22,7 @@ func GetMd5(s string) string {
 }
 
 //生成token
-func GenerateToken(identity string, name string) (string, error) {
+func GenerateToken(identity, name string) (string, error) {
 	UserClaim := UserClaims{
 		Identity:       identity,
 		Name:           name,
@@ -47,4 +49,16 @@ func AnalyseToken(tokenString string) (*UserClaims, error) {
 		return nil, fmt.Errorf("错误的token,err: %v", err)
 	}
 	return userClaim, nil
+}
+
+//发送验证码给单个用户
+func SendCode(toUserEmail, code string) error {
+	e := email.NewEmail()
+	e.From = "1474545380 <1474545380@qq.com>"
+	e.To = []string{toUserEmail}
+	e.Subject = "验证码发送测试"
+	e.HTML = []byte("您的验证码是<b>" + code + "</b>")
+	return e.Send("smtp.qq.com:587", smtp.PlainAuth("", "1474545380@qq.com", "mgepgzlrjrnmjeic", "smtp.qq.com"))
+	//返回EOF时关闭SSL重试
+	//return e.SendWithTLS("smtp.qq.com:587", smtp.PlainAuth("", "1474545380@qq.com", "mgepgzlrjrnmjeic", "smtp.qq.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.qq.com"})
 }
