@@ -31,10 +31,10 @@ func GetProblemList(c *gin.Context) {
 	var count int64
 	keyword := c.Query("keyword")
 	categoryIdentity := c.Query("category_identity")
-	data := make([]*models.Problem, 0)
+	list := make([]*models.Problem, 0)
 	tx := models.GetProblemList(keyword, categoryIdentity)
 
-	err = tx.Count(&count).Omit("content").Offset(page).Limit(size).Find(&data).Error
+	err = tx.Count(&count).Omit("content").Offset(page).Limit(size).Find(&list).Error
 	if err != nil {
 		log.Println("Get problem List err:", err)
 		return
@@ -42,7 +42,7 @@ func GetProblemList(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": map[string]interface{}{
-			"list":  data,
+			"list":  list,
 			"count": count,
 		},
 	})

@@ -16,6 +16,36 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "公共方法"
+                ],
+                "summary": "用户登陆",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "password",
+                        "name": "password",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":\"200\",\"data\":\"\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/problemdetail": {
             "get": {
                 "summary": "问题详情",
@@ -63,6 +93,75 @@ const docTemplate = `{
                         "type": "string",
                         "description": "category_identity",
                         "name": "category_identity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":\"200\",\"data\":\"\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/submitlist": {
+            "get": {
+                "summary": "提交列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "problem_identity",
+                        "name": "problem_identity",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user_identity",
+                        "name": "user_identity",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":\"200\",\"data\":\"\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/userdetail": {
+            "get": {
+                "tags": [
+                    "公共方法"
+                ],
+                "summary": "用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user identity",
+                        "name": "identity",
                         "in": "query"
                     }
                 ],
