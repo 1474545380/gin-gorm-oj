@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jordan-wright/email"
+	uuid "github.com/satori/go.uuid"
+	"math/rand"
 	"net/smtp"
+	"time"
 )
 
 type UserClaims struct {
@@ -56,9 +59,20 @@ func SendCode(toUserEmail, code string) error {
 	e := email.NewEmail()
 	e.From = "1474545380 <1474545380@qq.com>"
 	e.To = []string{toUserEmail}
-	e.Subject = "验证码发送测试"
+	e.Subject = "验证码已发送，请查收"
 	e.HTML = []byte("您的验证码是<b>" + code + "</b>")
 	return e.Send("smtp.qq.com:587", smtp.PlainAuth("", "1474545380@qq.com", "mgepgzlrjrnmjeic", "smtp.qq.com"))
 	//返回EOF时关闭SSL重试
 	//return e.SendWithTLS("smtp.qq.com:587", smtp.PlainAuth("", "1474545380@qq.com", "mgepgzlrjrnmjeic", "smtp.qq.com"), &tls.Config{InsecureSkipVerify: true, ServerName: "smtp.qq.com"})
+}
+
+//生成UUID,user identity
+func GetUUID() string {
+	return uuid.NewV4().String()
+}
+
+//生成验证码
+func GetRandom() string {
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return fmt.Sprintf("%06v", rnd.Int31n(1000000))
 }

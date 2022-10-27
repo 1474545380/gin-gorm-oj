@@ -6,7 +6,9 @@ import (
 	"gin-gorm-oj/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
+	"time"
 )
 
 // GetUserDetail
@@ -111,8 +113,10 @@ func SendCode(c *gin.Context) {
 		})
 		return
 	}
-	code := "123123"
-	err := help.SendCode(email, code)
+	vcode := help.GetRandom()
+	fmt.Println(vcode)
+	models.RDB.Set(c, email, vcode, time.Second*60)
+	err := help.SendCode(email, vcode)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    -1,
@@ -124,4 +128,109 @@ func SendCode(c *gin.Context) {
 		"code": 200,
 		"data": "发送成功",
 	})
+}
+
+// Resgister
+// @Tags 用户方法
+// @Summary 用户注册
+// @Param username formData string true "username"
+// @Param password formData string true "password"
+// @Param mail formData string true "mail"
+// @Param phone formData string false "phone"
+// @Param code formData string true "code"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /resgister [post]
+func Resgister(c *gin.Context) {
+	name := c.PostForm("username")
+	password := c.PostForm("password")
+	mail := c.PostForm("mail")
+	phone := c.PostForm("phone")
+	usercode := c.PostForm("code")
+	if mail == "" || usercode == "" || name == "" || password == "" {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "参数不正确",
+		})
+		return
+	}
+	//判断验证码是否正确
+	syscode, err := models.RDB.Get(c, mail).Result()
+	if err != nil {
+		log.Printf("get code err:%v\n", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "验证码不正确，请重新获取验证码",
+		})
+		return
+	}
+	if syscode != usercode {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "验证码不正确",
+		})
+		return
+	}
+	//判断邮箱是否已存在
+	var cnt int64
+	err = models.DB.Where("mail = ?", mail).Model(new(models.User)).Count(&cnt).Error
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "get user error:" + err.Error(),
+		})
+		return
+	}
+	if cnt > 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "邮箱已被注册",
+		})
+		return
+	}
+	//数据库插入数据
+	userIdentity := help.GetUUID()
+	data := models.User{
+		Identity: userIdentity,
+		Name:     name,
+		Password: help.GetMd5(password),
+		Phone:    phone,
+		Mail:     mail,
+	}
+	err = models.DB.Create(&data).Error
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "creat user err:" + err.Error(),
+		})
+		return
+	}
+	//生成token
+	token, err := help.GenerateToken(userIdentity, name)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    -1,
+			"message": "generate token error:" + err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": map[string]interface{}{
+			"token": token,
+		},
+	})
+}
+
+// GetRankList
+// @Tags 用户方法
+// @Summary 用户注册
+// @Param username formData string true "username"
+// @Param password formData string true "password"
+// @Param mail formData string true "mail"
+// @Param phone formData string false "phone"
+// @Param code formData string true "code"
+// @Success 200 {string} json "{"code":"200","data":""}"
+// @Router /ranklist [get]
+func GetRankList(c *gin.Context) {
+
 }
